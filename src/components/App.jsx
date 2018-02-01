@@ -2,12 +2,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      videos: [],
-      video: null,
+      videos: window.exampleVideoData,
+      video: window.exampleVideoData[0],
     };
     this.onTitleClick = this.onTitleClick.bind(this);
-    // this.searchYouTube = window.searchYouTube;
-    console.log('constructor');
   }
 
   componentDidMount() {
@@ -15,11 +13,28 @@ class App extends React.Component {
     //searchYouTube takes 2 arguments 
   // abstract query, func with videos
   // set this.state with new state from real data to fake data 
-    console.log('componentDidMount');
 
+    this.props.searchYouTube({query: 'fast cars', max: 5, key: window.YOUTUBE_API_KEY}, (videos)=>{
+      this.setState({
+        videos: videos,
+        video: videos[0]
+      });
+    });
+  }
 
-    this.props.searchYouTube(undefined, (videos)=>{
-      console.log('callback for componentDidMount');
+  onUserSearch(text) {
+    // create an object
+    let options = {
+      // query prop set to text
+      // max set to 5
+      // key set to window.YOUTUBE key
+      query: text,
+      max: 5,
+      key: window.YOUTUBE_API_KEY
+    };
+    
+    // call searchYouTube passing in object and callback to setState values
+    this.props.searchYouTube(options, (videos) => {
       this.setState({
         videos: videos,
         video: videos[0]
@@ -34,7 +49,6 @@ class App extends React.Component {
   }
 
   render() {
-    console.log('render');
     return (
       <div>
         <nav className="navbar">
@@ -44,7 +58,6 @@ class App extends React.Component {
         </nav>
         <div className="row">
           <div className="col-md-7">
-            {console.log(this.props)}
             {this.state.video ? <VideoPlayer video={this.state.video}/> : null}
           </div>
           <div className="col-md-5">
