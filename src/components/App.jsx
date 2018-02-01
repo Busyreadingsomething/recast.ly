@@ -4,16 +4,14 @@ class App extends React.Component {
     this.state = {
       videos: window.exampleVideoData,
       video: window.exampleVideoData[0],
+      input: ''
     };
     this.onTitleClick = this.onTitleClick.bind(this);
+    this.onUserSearch = this.onUserSearch.bind(this);
+    this.onInputUpdate = this.onInputUpdate.bind(this);
   }
 
   componentDidMount() {
-    // this.searchYouTube();
-    //searchYouTube takes 2 arguments 
-  // abstract query, func with videos
-  // set this.state with new state from real data to fake data 
-
     this.props.searchYouTube({query: 'fast cars', max: 5, key: window.YOUTUBE_API_KEY}, (videos)=>{
       this.setState({
         videos: videos,
@@ -22,18 +20,21 @@ class App extends React.Component {
     });
   }
 
-  onUserSearch(text) {
-    // create an object
+  onUserSearch(event) {
+    let text;
+    if (event.type === 'click') {
+      text = this.state.input;
+      console.log(text);
+    } else {
+      text = event.target.value;
+    }
+
     let options = {
-      // query prop set to text
-      // max set to 5
-      // key set to window.YOUTUBE key
       query: text,
       max: 5,
       key: window.YOUTUBE_API_KEY
     };
-    
-    // call searchYouTube passing in object and callback to setState values
+
     this.props.searchYouTube(options, (videos) => {
       this.setState({
         videos: videos,
@@ -48,12 +49,20 @@ class App extends React.Component {
     });
   }
 
+  onInputUpdate(event) {
+    let input = event.target.value;
+    this.setState({
+      input: input
+    });
+    // console.log(this.state.input);
+  }
+
   render() {
     return (
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <Search />
+            <Search search={this.onUserSearch} currentInput={this.onInputUpdate}/>
           </div>
         </nav>
         <div className="row">
