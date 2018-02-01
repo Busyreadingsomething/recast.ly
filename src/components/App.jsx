@@ -2,20 +2,39 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      videos: window.exampleVideoData,
-      video: window.exampleVideoData[0]
+      videos: [],
+      video: null,
     };
     this.onTitleClick = this.onTitleClick.bind(this);
+    // this.searchYouTube = window.searchYouTube;
+    console.log('constructor');
+  }
+
+  componentDidMount() {
+    // this.searchYouTube();
+    //searchYouTube takes 2 arguments 
+  // abstract query, func with videos
+  // set this.state with new state from real data to fake data 
+    console.log('componentDidMount');
+
+
+    this.props.searchYouTube(undefined, (videos)=>{
+      console.log('callback for componentDidMount');
+      this.setState({
+        videos: videos,
+        video: videos[0]
+      });
+    });
   }
 
   onTitleClick(video) {
-    console.log('CLICK!', video);
     this.setState({
       video: video
     });
   }
 
   render() {
+    console.log('render');
     return (
       <div>
         <nav className="navbar">
@@ -25,7 +44,8 @@ class App extends React.Component {
         </nav>
         <div className="row">
           <div className="col-md-7">
-            <VideoPlayer video={this.state.video}/>
+            {console.log(this.props)}
+            {this.state.video ? <VideoPlayer video={this.state.video}/> : null}
           </div>
           <div className="col-md-5">
             <VideoList videos={this.state.videos} titleClick={this.onTitleClick}/>
