@@ -3,7 +3,7 @@ var searchYouTube = (options, callback) => {
   let dataObj = {
     videoEmbeddable: true,
     type: 'video',
-    part: 'snippet'
+    part: 'snippet',
   };
 
   if (options === undefined) {

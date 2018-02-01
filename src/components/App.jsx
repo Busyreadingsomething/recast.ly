@@ -7,7 +7,7 @@ class App extends React.Component {
       input: ''
     };
     this.onTitleClick = this.onTitleClick.bind(this);
-    this.onUserSearch = this.onUserSearch.bind(this);
+    this.onUserSearch = _.throttle(this.onUserSearch.bind(this), 300);
     this.onInputUpdate = this.onInputUpdate.bind(this);
   }
 
