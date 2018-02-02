@@ -4,6 +4,7 @@ var Search = (props) => (
     <button className="btn hidden-sm-down" onClick={props.search}>
       <span className="glyphicon glyphicon-search"></span>
     </button>
+    <AutoPlayer autoplay={props.autoplay}/>
   </div> 
 );
 

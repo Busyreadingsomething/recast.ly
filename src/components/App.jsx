@@ -5,18 +5,26 @@ class App extends React.Component {
       videos: window.exampleVideoData,
       video: window.exampleVideoData[0],
       input: '',
-      description: ''
+      description: '',
+      autoplay: false
     };
     this.onTitleClick = this.onTitleClick.bind(this);
     this.onUserSearch = _.throttle(this.onUserSearch.bind(this), 300);
     this.onInputUpdate = this.onInputUpdate.bind(this);
     this.getFullDescription = this.getFullDescription.bind(this);
     this.setDescription = this.setDescription.bind(this);
+    this.toggleAutoPlay = this.toggleAutoPlay.bind(this);
   }
 
   setDescription(description) {
     this.setState({
       description: description
+    });
+  }
+
+  toggleAutoPlay() {
+    this.setState({
+      autoplay: !this.state.autoplay
     });
   }
 
@@ -53,7 +61,6 @@ class App extends React.Component {
 
   getFullDescription(callback) {
     let id = this.state.video.id.videoId;
-    console.log('Called me:', id);
     $.ajax({
       type: 'GET',
       url: 'https://www.googleapis.com/youtube/v3/videos?part=snippet&id=' + id,
@@ -61,7 +68,6 @@ class App extends React.Component {
         key: window.YOUTUBE_API_KEY
       },
       success: function(data) {
-        console.log('success gFD', data.items[0].snippet.description);
         callback(data.items[0].snippet.description);
       },
       error: function(data) {
@@ -89,13 +95,12 @@ class App extends React.Component {
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <Search search={this.onUserSearch} currentInput={this.onInputUpdate}/>
+            <Search search={this.onUserSearch} currentInput={this.onInputUpdate} autoplay={this.toggleAutoPlay}/>
           </div>
         </nav>
         <div className="row">
           <div className="col-md-7">
-            {this.state.video ? <VideoPlayer video={this.state.video}/> : null}
-            <VideoDescription description={this.state.description}/>
+            {this.state.video ? <VideoPlayer video={this.state.video} description={this.state.description} autoplay={this.state.autoplay}/> : null}
           </div>
           <div className="col-md-5">
             <VideoList videos={this.state.videos} titleClick={this.onTitleClick}/>
