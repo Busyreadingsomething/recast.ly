@@ -4,11 +4,20 @@ class App extends React.Component {
     this.state = {
       videos: window.exampleVideoData,
       video: window.exampleVideoData[0],
-      input: ''
+      input: '',
+      description: ''
     };
     this.onTitleClick = this.onTitleClick.bind(this);
     this.onUserSearch = _.throttle(this.onUserSearch.bind(this), 300);
     this.onInputUpdate = this.onInputUpdate.bind(this);
+    this.getFullDescription = this.getFullDescription.bind(this);
+    this.setDescription = this.setDescription.bind(this);
+  }
+
+  setDescription(description) {
+    this.setState({
+      description: description
+    });
   }
 
   componentDidMount() {
@@ -16,7 +25,7 @@ class App extends React.Component {
       this.setState({
         videos: videos,
         video: videos[0]
-      });
+      }, this.getFullDescription.bind(this, this.setDescription));
     });
   }
 
@@ -24,7 +33,6 @@ class App extends React.Component {
     let text;
     if (event.type === 'click') {
       text = this.state.input;
-      console.log(text);
     } else {
       text = event.target.value;
     }
@@ -39,9 +47,29 @@ class App extends React.Component {
       this.setState({
         videos: videos,
         video: videos[0]
-      });
+      }, this.getFullDescription.bind(this, this.setDescription));
     });
   }
+
+  getFullDescription(callback) {
+    let id = this.state.video.id.videoId;
+    console.log('Called me:', id);
+    $.ajax({
+      type: 'GET',
+      url: 'https://www.googleapis.com/youtube/v3/videos?part=snippet&id=' + id,
+      data: {
+        key: window.YOUTUBE_API_KEY
+      },
+      success: function(data) {
+        console.log('success gFD', data.items[0].snippet.description);
+        callback(data.items[0].snippet.description);
+      },
+      error: function(data) {
+        console.log('error', data);
+      }
+    });
+  }
+
 
   onTitleClick(video) {
     this.setState({
@@ -54,7 +82,6 @@ class App extends React.Component {
     this.setState({
       input: input
     });
-    // console.log(this.state.input);
   }
 
   render() {
@@ -68,6 +95,7 @@ class App extends React.Component {
         <div className="row">
           <div className="col-md-7">
             {this.state.video ? <VideoPlayer video={this.state.video}/> : null}
+            <VideoDescription description={this.state.description}/>
           </div>
           <div className="col-md-5">
             <VideoList videos={this.state.videos} titleClick={this.onTitleClick}/>
